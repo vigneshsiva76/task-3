@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cognifyz – Task Manager CRUD App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- ═══════════════════════════════════ HEADER ══════════════════════════ -->
+  <header class="app-header">
+    <div class="header-brand">
+      <h1>Task <em>Manager</em></h1>
+      <p>Cognifyz · Level 1 · Task 3 · CRUD Operations</p>
+    </div>
+    <div class="header-meta">
+      <span class="header-tag">Beginner</span>
+      <span class="header-date" id="header-date"></span>
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════ SIDEBAR (FORM) ══════════════════ -->
+  <aside class="sidebar">
+    <div class="form-card">
+
+      <!-- Form heading -->
+      <h2 class="form-heading" id="form-heading">＋ New Task</h2>
+
+      <!-- CREATE / UPDATE FORM -->
+      <form id="task-form" autocomplete="off" novalidate>
+
+        <!-- Title -->
+        <div class="form-group">
+          <label for="task-title">Title *</label>
+          <input
+            type="text"
+            id="task-title"
+            class="form-control"
+            placeholder="What needs to be done?"
+            maxlength="120"
+            required
+          />
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="task-desc">Description</label>
+          <textarea
+            id="task-desc"
+            class="form-control"
+            placeholder="Optional details…"
+            maxlength="500"
+          ></textarea>
+        </div>
+
+        <!-- Priority & Category -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-priority">Priority</label>
+            <select id="task-priority" class="form-control">
+              <option value="high">🔴 High</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="low">🟢 Low</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="task-category">Category</label>
+            <input
+              type="text"
+              id="task-category"
+              class="form-control"
+              placeholder="e.g. Work, Study"
+              maxlength="40"
+              list="category-suggestions"
+            />
+            <datalist id="category-suggestions">
+              <option value="Work">
+              <option value="Personal">
+              <option value="Study">
+              <option value="Health">
+              <option value="Finance">
+              <option value="Home">
+            </datalist>
+          </div>
+        </div>
+
+        <!-- Due Date -->
+        <div class="form-group">
+          <label for="task-due">Due Date</label>
+          <input type="date" id="task-due" class="form-control" />
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary" id="btn-submit">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Task
+          </button>
+          <button type="button" class="btn btn-ghost" id="btn-cancel" style="display:none;">
+            Cancel
+          </button>
+        </div>
+
+      </form>
+
+      <p class="shortcut-hint">Press <kbd>N</kbd> to focus · <kbd>Esc</kbd> to cancel edit</p>
+
+      <!-- Bulk action section -->
+      <div class="sidebar-section">
+        <h3>Bulk Actions</h3>
+        <button class="btn btn-danger-ghost" id="btn-clear-completed" style="width:100%;">
+          🗑 Clear All Completed
+        </button>
+      </div>
+
+    </div>
+  </aside>
+
+
+  <!-- ═══════════════════════════════════ STATS ═══════════════════════════ -->
+  <section class="stats-strip">
+
+    <!-- Stat boxes -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-active">0</div>
+        <div class="stat-label">Active</div>
+      </div>
+      <div class="stat-box success">
+        <div class="stat-value" id="stat-completed">0</div>
+        <div class="stat-label">Done</div>
+      </div>
+      <div class="stat-box warn">
+        <div class="stat-value" id="stat-high">0</div>
+        <div class="stat-label">High Pri.</div>
+      </div>
+      <div class="stat-box danger">
+        <div class="stat-value" id="stat-overdue">0</div>
+        <div class="stat-label">Overdue</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-meta">
+      <span class="progress-label" id="progress-label">0% complete</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-bar"></div>
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════ TASK LIST ═══════════════════════ -->
+  <section class="list-area">
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+
+      <!-- Search -->
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="text"
+          id="search-input"
+          class="search-input"
+          placeholder="Search tasks…"
+        />
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <!-- Status filter -->
+      <select id="filter-status" class="filter-select">
+        <option value="all">All status</option>
+        <option value="active">Active</option>
+        <option value="completed">Completed</option>
+      </select>
+
+      <!-- Priority filter -->
+      <select id="filter-priority" class="filter-select">
+        <option value="">All priorities</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+
+      <!-- Category filter -->
+      <select id="filter-category" class="filter-select">
+        <option value="">All categories</option>
+      </select>
+
+      <!-- Sort -->
+      <select id="filter-sort" class="filter-select">
+        <option value="default">Newest first</option>
+        <option value="priority">By priority</option>
+        <option value="dueDate">By due date</option>
+        <option value="title">By title A–Z</option>
+      </select>
+
+    </div>
+
+    <!-- Bulk bar -->
+    <div class="bulk-bar">
+      <span class="list-count" id="list-count"></span>
+    </div>
+
+    <!-- Task cards -->
+    <div id="task-list" role="list" aria-label="Task list"></div>
+
+    <!-- Empty state -->
+    <div id="empty-state" role="status" aria-live="polite">
+      <div class="empty-icon">📋</div>
+      <h3 class="empty-title">No tasks here</h3>
+      <p class="empty-sub">Add your first task using the form on the left, or clear your filters.</p>
+    </div>
+
+  </section>
+
+</div><!-- /app-wrapper -->
+
+
+<!-- Toast notifications -->
+<div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+
+<!-- Scripts -->
+<script src="app.js"></script>
+<script>
+  // Set header date
+  document.getElementById('header-date').textContent =
+    new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // Update list count after render
+  const origRenderList = TaskUI.prototype._renderList;
+  // Patch to update count label
+  (function patchCount() {
+    const observer = new MutationObserver(() => {
+      const cards = document.querySelectorAll('.task-card');
+      const el = document.getElementById('list-count');
+      if (el) el.textContent = cards.length === 0 ? '' : `${cards.length} task${cards.length !== 1 ? 's' : ''} shown`;
+    });
+    observer.observe(document.getElementById('task-list') || document.body, { childList: true, subtree: false });
+  })();
+</script>
+</body>
+</html>
